@@ -87,6 +87,11 @@ export interface UseCopilotReadableOptions {
   categories?: string[];
 
   /**
+   * Whether the context is available to the Copilot.
+   */
+  available?: "enabled" | "disabled";
+
+  /**
    * A custom conversion function to use to serialize the value to a string. If not provided, the value
    * will be serialized using `JSON.stringify`.
    */
@@ -101,9 +106,9 @@ function convertToJSON(description: string, value: any): string {
  * Adds the given information to the Copilot context to make it readable by Copilot.
  */
 export function useCopilotReadable(
-  { description, value, parentId, categories, convert }: UseCopilotReadableOptions,
+  { description, value, parentId, categories, convert, available = "enabled" }: UseCopilotReadableOptions,
   dependencies?: any[],
-): string | undefined {
+): string | undefined {  
   const { addContext, removeContext } = useCopilotContext();
   const idRef = useRef<string>();
   convert = convert || convertToJSON;
@@ -111,13 +116,15 @@ export function useCopilotReadable(
   const information = convert(description, value);
 
   useEffect(() => {
+    if (available === "disabled") return;
+
     const id = addContext(information, parentId, categories);
     idRef.current = id;
 
     return () => {
       removeContext(id);
     };
-  }, [information, parentId, addContext, removeContext, ...(dependencies || [])]);
+  }, [available, information, parentId, addContext, removeContext, ...(dependencies || [])]);
 
   return idRef.current;
 }

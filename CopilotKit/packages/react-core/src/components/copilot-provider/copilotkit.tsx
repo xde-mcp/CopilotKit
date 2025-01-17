@@ -80,6 +80,7 @@ export function CopilotKitInternal({ children, ...props }: CopilotKitProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [chatInstructions, setChatInstructions] = useState("");
   const [authStates, setAuthStates] = useState<Record<string, AuthState>>({});
+  const [additionalInstructions, setAdditionalInstructions] = useState<string[]>([]);
 
   const {
     addElement: addDocument,
@@ -346,6 +347,8 @@ export function CopilotKitInternal({ children, ...props }: CopilotKitProps) {
         removeChatSuggestionConfiguration,
         chatInstructions,
         setChatInstructions,
+        additionalInstructions,
+        setAdditionalInstructions,
         showDevConsole,
         coagentStates,
         setCoagentStates,
